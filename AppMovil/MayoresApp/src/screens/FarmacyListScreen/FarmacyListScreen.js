@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Linking } from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 
@@ -14,18 +14,16 @@ const FarmacyListScreen = () => {
     
     const handleCallPolice = () => {
         console.warn('Llamando a la policía');
-    
-    
-}
-
-    const handleOpenMaps = () => {
-        // Abre Google Maps para localizar farmacias cercanas (debes implementar esta función).
     }
 
-    
+    const handleOpenMaps = () => {
+        // Abre Google Maps para localizar farmacias cercanas.
+        Linking.openURL('https://www.google.com/maps/search/farmacias');
+    }
 
     const handleOpenCalendar = () => {
-        navigation.navigate('Calendar'); // Reemplaza 'Calendar' con el nombre de tu pantalla de calendario.
+        // Agrega aquí la lógica para abrir la pantalla de calendario.
+        navigation.navigate('Calendar');
     }
 
     const handleReturnPressed = () => {

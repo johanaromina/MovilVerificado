@@ -1,29 +1,27 @@
 import React, { useState } from 'react';
-import { View, Text, Modal, Image, StyleSheet, useWindowDimensions } from 'react-native';
-import CustomButton from '../../components/CustomButton/CustomButton'; // Corregir la importación de CustomButton
-import CustomInput from '../../components/CustomInput/CustomInput'; // Corregir la importación de CustomInput
+import { View, Text, Modal, Image, StyleSheet, useWindowDimensions, Linking } from 'react-native';
+import { sendWhatsapp } from 'react-native-send-intent'; // Importa sendWhatsapp
+import CustomButton from '../../components/CustomButton/CustomButton';
+import CustomInput from '../../components/CustomInput/CustomInput';
 import { useNavigation } from '@react-navigation/native';
 
 import logo from '../../../assets/foto1.png';
 
 const FamilyMembersListScreen = () => {
   const username = '...';
-  const { height, width } = useWindowDimensions(); // Obtén dimensiones de la pantalla
+  const { height, width } = useWindowDimensions();
   const [modalVisible, setModalVisible] = useState(false);
   const [alarmType, setAlarmType] = useState('');
 
   const navigation = useNavigation(); 
-  
+
   const handleAddFamiliar = () => {
-    navigation.navigate('AddFamiliar'); // Corregir el nombre de la pantalla a 'AddFamiliar'
+    navigation.navigate('AddFamiliar');
   };
 
   const callFamilyMember = () => {
-    console.warn('Llamando a Martín');
-  };
-
-  const handleConfigurationPressed = () => {
-    // Navegar a la pantalla de configuración.
+    const phoneNumber = '2604618942'; // Reemplaza esto con el número de teléfono del familiar
+    Linking.openURL(`tel:${phoneNumber}`);
   };
 
   const openAlarmModal = (type) => {
@@ -37,9 +35,22 @@ const FamilyMembersListScreen = () => {
 
   const sendAlarm = () => {
     // Implementar la lógica para enviar una alarma por WhatsApp al familiar seleccionado.
-    // usar librerías como 'react-native-communications' para abrir WhatsApp.
     closeAlarmModal();
   };
+
+  const handleSendWhatsapp = () => {
+    // Reemplaza '+5492604618942' con el número de teléfono al que deseas enviar el mensaje
+    // y 'Mensaje de prueba' con el mensaje que deseas enviar.
+    const phoneNumber = '+5492604618942';
+    const message = 'Mensaje de prueba';
+    const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+    
+    Linking.openURL(url).then((data) => {
+      console.log('WhatsApp abierto');
+    }).catch(() => {
+      console.log('Error al abrir WhatsApp');
+    });
+  }; 
 
   return (
     <View style={styles.container}>
@@ -49,8 +60,7 @@ const FamilyMembersListScreen = () => {
         style={[styles.logo, { height: height * 0.3, width: width * 0.7 }]}
         resizeMode="contain"
       />
-      <Text style={styles.emergencyText}>Si tienes una emergencia, llama a {username}</Text>
-
+      
       <View style={styles.buttonsContainer}>
         <CustomButton
           onPress={handleAddFamiliar}
@@ -61,27 +71,15 @@ const FamilyMembersListScreen = () => {
       </View>
 
       <Text style={styles.alarmTitle}>Alarmas</Text>
-      <View style={styles.buttonsContainer}>
-        <CustomButton
-          onPress={() => openAlarmModal('red')}
-          text="Alarma Roja"
-          backgroundColor="#D50000"
-          foregroundColor="#FFFFFF"
-        />
-        <CustomButton
-          onPress={() => openAlarmModal('yellow')}
-          text="Alarma Amarilla"
-          backgroundColor="#FFD600"
-          foregroundColor="#000000"
-        />
-        <CustomButton
-          onPress={() => openAlarmModal('green')}
-          text="Alarma Verde"
-          backgroundColor="#388E3C"
-          foregroundColor="#FFFFFF"
-        />
+      <View style={styles.alarmContainer}>
+        <View style={styles.semaphore}>
+          <View style={[styles.alarmButton, { backgroundColor: '#D50000' }]} />
+          <View style={[styles.alarmButton, { backgroundColor: '#FFD600' }]} />
+          <View style={[styles.alarmButton, { backgroundColor: '#388E3C' }]} />
+        </View>
       </View>
-
+      
+      <Text style={styles.emergencyText}>Si tienes una emergencia, llama a {username}</Text>
       <CustomButton
         onPress={callFamilyMember}
         text="Llamar a familiar"
@@ -90,9 +88,10 @@ const FamilyMembersListScreen = () => {
         style={styles.bottomButton}
       />
       <CustomButton
-        onPress={handleConfigurationPressed}
-        text="Configuración"
-        type="tertiary"
+        onPress={handleSendWhatsapp}
+        text="Enviar mensaje por WhatsApp"
+        backgroundColor="#25D366"
+        foregroundColor="#FFFFFF"
         style={styles.bottomButton}
       />
 
@@ -112,7 +111,7 @@ const FamilyMembersListScreen = () => {
 
       <CustomButton
         onPress={() => {
-          navigation.goBack(); // Cambiar a goBack() para volver a la pantalla anterior
+          navigation.goBack();
         }}
         text="Volver"
         backgroundColor="#6ebf6e"
@@ -167,7 +166,22 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   logo: {
-    maxHeight: 200,
+    maxHeight: 100,
+  },
+  alarmContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end', // Alinea los botones a la derecha
+    marginBottom: 20,
+  },
+  alarmButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginHorizontal: 5,
+  },
+  semaphore: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 

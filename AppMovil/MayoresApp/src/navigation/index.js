@@ -14,6 +14,8 @@ import FarmacyListScreen from '../screens/FarmacyListScreen/FarmacyListScreen';
 import FamilyMembersListScreen from '../screens/FamilyMembersListScreen';
 import AddPharmacyScreen from '../screens/FarmacyListScreen/AddPharmacyScreen'; // Agrega la importación de la nueva pantalla
 import AddFamiliarScreen from '../screens/FamilyMembersListScreen/AddFamiliarScreen';
+import Calendar from '../screens/FarmacyListScreen/Calendar';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +35,9 @@ const Navigation = () => {
                 <Stack.Screen name="Family Members List" component={FamilyMembersListScreen}/>
                 <Stack.Screen name="AddFamiliar" component={AddFamiliarScreen} />
                 <Stack.Screen name="AddPharmacy" component={AddPharmacyScreen} /> 
+                <Stack.Screen name="Calendar" component={Calendar} />
+
+
             
             </Stack.Navigator>
         </NavigationContainer>
