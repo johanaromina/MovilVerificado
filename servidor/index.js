@@ -32,7 +32,8 @@ app.get('/registrationrequest', (req, res) => {
     });
 });
 
-app.post('/registrationrequest', (req, res) => {
+app.post('/register', (req, res) => {
+    console.log ('nuevo usuario solicitado')
     const { username, email, password } = req.body;
     // Asegúrate de que los datos requeridos estén presentes
     if (!username || !email || !password) {
@@ -41,7 +42,7 @@ app.post('/registrationrequest', (req, res) => {
 
     // Conecta con la base de datos y realiza la inserción de datos
     connection.query(
-        `INSERT INTO registrationrequests (Username, Email, Password) VALUES ('${username}', '${email}', '${password}')`,
+        `INSERT INTO users (Username, Email, Password, IsEmailConfirmed) VALUES ('${username}', '${email}', '${password}', 1)`,
         (err, results) => {
             if (err) {
                 console.error('Error al insertar en la base de datos:', err);
