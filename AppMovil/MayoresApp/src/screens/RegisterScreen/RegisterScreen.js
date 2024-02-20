@@ -25,7 +25,7 @@ const RegisterScreen = () => {
             console.log('Solicitud de registro enviada:', { username, email, password });
 
     
-            const response = await axios.post('http://192.168.0.120:3300/Register', {
+            const response = await axios.post('http://localhost:3300/register', {
                 username,
                 email,
                 password,
