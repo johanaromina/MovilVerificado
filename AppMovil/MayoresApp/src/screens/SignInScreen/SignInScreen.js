@@ -13,9 +13,18 @@ const SignInScreen = () => {
 
     const handleSignInPressed = async () => {
         try {
-            // Aquí iba la lógica de conexión a la base de datos 
-         
-            navigation.navigate('Home');
+            const response = await axios.post('http://localhost:3300/login', {
+                username,
+                password,
+            });
+            
+            if (response.data) {
+                // Si la respuesta del servidor es exitosa, navega a la pantalla de inicio
+                navigation.navigate('Home');
+            } else {
+                // Si las credenciales son incorrectas, muestra un mensaje de error
+                Alert.alert('Error', 'Credenciales incorrectas');
+            }
         } catch (error) {
             console.error('Error de red:', error);
             Alert.alert('Error', 'Hubo un error en la solicitud');
@@ -59,8 +68,8 @@ const SignInScreen = () => {
                 <CustomButton
                     onPress={handleSignInPressed}
                     text="Ingresar"
-                    style={[styles.button, styles.greenButton]} // Estilos combinados para el botón verde
-                    foregroundColor="#FFFFFF" // Color del texto del botón en blanco
+                    style={[styles.button, styles.greenButton]}
+                    foregroundColor="#FFFFFF"
                 />
 
                 <CustomButton
@@ -93,7 +102,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,
-        backgroundColor: 'rgba(180, 238, 180, 0.5)', // Fondo de color degradado
+        backgroundColor: 'rgba(180, 238, 180, 0.5)',
     },
     imageContainer: {
         alignItems: 'center',
@@ -110,19 +119,20 @@ const styles = StyleSheet.create({
         padding: 10,
         marginTop: 20,
         fontFamily: 'Arial',
-        textShadowColor: 'rgba(0, 0, 0, 0.5)', // Sombreado del texto
-        textShadowOffset: { width: 2, height: 2 }, // Desplazamiento del sombreado
-        textShadowRadius: 10, // Radio del sombreado
+        textShadowColor: 'rgba(0, 0, 0, 0.5)',
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 10,
     },
     button: {
-        marginVertical: 10, // Espacio vertical entre botones
+        marginVertical: 10,
     },
     greenButton: {
-        backgroundColor: '#3CB371', // Nuevo tono de verde
+        backgroundColor: '#3CB371',
     },
 });
 
 export default SignInScreen;
+
 
 
 
