@@ -32,7 +32,7 @@ app.get('/registrationrequest', (req, res) => {
     });
 });
 
-app.post('/register', (req, res) => {
+app.post('/registrationrequest', (req, res) => {
     const { username, email, password } = req.body;
     // Asegúrate de que los datos requeridos estén presentes
     if (!username || !email || !password) {
@@ -52,7 +52,7 @@ app.post('/register', (req, res) => {
     );
 });
 
-app.post('/login', (req, res) => {
+app.post('/registrationrequest', (req, res) => {
     const { username, password } = req.body;
     // Verificar si los campos requeridos están presentes
     if (!username || !password) {
@@ -80,7 +80,8 @@ app.post('/login', (req, res) => {
     );
 });
 
-app.post('/addfamiliar', (req, res) => {
+app.post('/registrationrequest', (req, res) => {
+    
     const { nombre, telefono, email, usuarioId } = req.body;
     if (!nombre || !telefono) {
       return res.status(400).send('Nombre y Teléfono son campos requeridos');

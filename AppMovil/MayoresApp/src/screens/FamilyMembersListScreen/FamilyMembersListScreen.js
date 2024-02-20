@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Modal, Image, StyleSheet, useWindowDimensions } from 'react-native';
-import CustomButton from '../../components/CustomButton/CustomButton';
-import CustomInput from '../../components/CustomInput/CustomInput';
+import CustomButton from '../../components/CustomButton/CustomButton'; // Corregir la importación de CustomButton
+import CustomInput from '../../components/CustomInput/CustomInput'; // Corregir la importación de CustomInput
 import { useNavigation } from '@react-navigation/native';
 
 import logo from '../../../assets/foto1.png';
@@ -15,13 +15,7 @@ const FamilyMembersListScreen = () => {
   const navigation = useNavigation(); 
   
   const handleAddFamiliar = () => {
-    navigation.navigate('AddFamiliarScreen');
-  };
-
-
-
-  const callPolice = () => {
-    console.warn('Llamando a la policía');
+    navigation.navigate('AddFamiliar'); // Corregir el nombre de la pantalla a 'AddFamiliar'
   };
 
   const callFamilyMember = () => {
@@ -57,23 +51,17 @@ const FamilyMembersListScreen = () => {
       />
       <Text style={styles.emergencyText}>Si tienes una emergencia, llama a {username}</Text>
 
-      
-      <CustomButton
-        onPress={handleAddFamiliar}
-        text="Agregar Familiar" 
-        backgroundColor="#008B8B"
-        foregroundColor="#FFFFFF"
-      />
-      
-
       <View style={styles.buttonsContainer}>
         <CustomButton
-          onPress={callPolice}
-          text="Llamar a la policía"
-          backgroundColor="#7cfc00"
+          onPress={handleAddFamiliar}
+          text="Agregar Familiar" 
+          backgroundColor="#008B8B"
           foregroundColor="#FFFFFF"
         />
-        <Text style={styles.sendAlarmText}>Envía una alarma:</Text>
+      </View>
+
+      <Text style={styles.alarmTitle}>Alarmas</Text>
+      <View style={styles.buttonsContainer}>
         <CustomButton
           onPress={() => openAlarmModal('red')}
           text="Alarma Roja"
@@ -92,18 +80,21 @@ const FamilyMembersListScreen = () => {
           backgroundColor="#388E3C"
           foregroundColor="#FFFFFF"
         />
-        <CustomButton
-          onPress={callFamilyMember}
-          text="Llamar a familiar"
-          backgroundColor="#ff6347"
-          foregroundColor="#FFFFFF"
-        />
-        <CustomButton
-          onPress={handleConfigurationPressed}
-          text="Configuración"
-          type="tertiary"
-        />
       </View>
+
+      <CustomButton
+        onPress={callFamilyMember}
+        text="Llamar a familiar"
+        backgroundColor="#ff6347"
+        foregroundColor="#FFFFFF"
+        style={styles.bottomButton}
+      />
+      <CustomButton
+        onPress={handleConfigurationPressed}
+        text="Configuración"
+        type="tertiary"
+        style={styles.bottomButton}
+      />
 
       <Modal
         animationType="slide"
@@ -121,11 +112,12 @@ const FamilyMembersListScreen = () => {
 
       <CustomButton
         onPress={() => {
-          navigation.navigate('HomeScreen');
+          navigation.goBack(); // Cambiar a goBack() para volver a la pantalla anterior
         }}
-        text="Volver a la pantalla principal"
-        backgroundColor="#483d8b"
+        text="Volver"
+        backgroundColor="#6ebf6e"
         foregroundColor="#FFFFFF"  
+        style={[styles.bottomButton, { marginBottom: 20 }]}
       />
     </View>
   );
@@ -147,14 +139,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 10,
   },
-  sendAlarmText: {
-    fontSize: 16,
-    marginTop: 10,
+  alarmTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
     marginBottom: 10,
   },
   buttonsContainer: {
-    alignItems: 'flex-start', // Cambia de 'center' a 'flex-start'
-    marginLeft: 20, // Agrega un margen a la izquierda
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  bottomButton: {
+    width: '45%',
+    marginHorizontal: '2.5%',
+    marginBottom: 10,
   },
   modalContainer: {
     flex: 1,

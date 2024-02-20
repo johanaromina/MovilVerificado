@@ -13,7 +13,7 @@ import HospitalListScreen from '../screens/HospitalListScreen';
 import FarmacyListScreen from '../screens/FarmacyListScreen/FarmacyListScreen';
 import FamilyMembersListScreen from '../screens/FamilyMembersListScreen';
 import AddPharmacyScreen from '../screens/FarmacyListScreen/AddPharmacyScreen'; // Agrega la importación de la nueva pantalla
-import AddFamiliarScreen from '../screens/FamilyMembersListScreen/AddFamiliarScreen'
+import AddFamiliarScreen from '../screens/FamilyMembersListScreen/AddFamiliarScreen';
 
 const Stack = createNativeStackNavigator();
 
