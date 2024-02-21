@@ -1,72 +1,83 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 
-const Calendar = () => {
+const Calendar = ({ navigation }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const navigation = useNavigation();
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
 
-  const handleReturnToPharmacyList = () => {
-    navigation.goBack();
+  const changeMonth = (value) => {
+    const newDate = new Date(selectedDate);
+    newDate.setMonth(selectedDate.getMonth() + value);
+    setSelectedDate(newDate);
   };
 
-  const getWeekDays = () => {
-    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-    return days.map((day) => (
-      <View style={styles.dayHeader} key={day}>
-        <Text>{day}</Text>
-      </View>
-    ));
+  const changeYear = (value) => {
+    const newDate = new Date(selectedDate);
+    newDate.setFullYear(selectedDate.getFullYear() + value);
+    setSelectedDate(newDate);
   };
 
-  const getMonthDays = () => {
+  const getDayName = (dayIndex) => {
+    const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+    return days[dayIndex];
+  };
+
+  const getMonthCalendar = () => {
+    const monthCalendar = [];
     const firstDayOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
-    const startingDay = firstDayOfMonth.getDay();
-
+    const startingDay = firstDayOfMonth.getDay() === 0 ? 6 : firstDayOfMonth.getDay() - 1; // Ajuste para que Lunes sea 0 y Domingo 6
     const lastDayOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
     const numberOfDays = lastDayOfMonth.getDate();
+    let week = [];
 
-    let days = [];
-
+    // Fill empty days at the start of the month
     for (let i = 0; i < startingDay; i++) {
-      days.push(<View style={styles.emptyDay} key={`empty-${i}`} />);
+      week.push(<View style={styles.emptyDay} key={`empty-${i}`} />);
     }
 
+    // Fill days of the month
     for (let i = 1; i <= numberOfDays; i++) {
       const day = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), i);
-      days.push(
+      const dayOfWeek = day.getDay();
+
+      week.push(
         <TouchableOpacity
           style={[styles.day, day.getDate() === selectedDate.getDate() && styles.selectedDay]}
           onPress={() => handleDateChange(day)}
           key={i}
         >
-          <Text>{i}</Text>
+          <Text style={styles.dayText}>{i}</Text>
+          <Text style={styles.dayOfWeekText}>{getDayName(dayOfWeek)}</Text>
         </TouchableOpacity>
       );
+
+      // Start new row (week) when it's a Sunday or it's the last day of the month
+      if (dayOfWeek === 6 || i === numberOfDays) {
+        monthCalendar.push(<View style={styles.week} key={i}>{week}</View>);
+        week = [];
+      }
     }
 
-    return days;
+    return monthCalendar;
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, selectedDate.getDate()))}>
+        <TouchableOpacity onPress={() => changeMonth(-1)}>
           <Text style={styles.prevNextButton}>{'<'}</Text>
         </TouchableOpacity>
         <Text style={styles.headerText}>{selectedDate.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}</Text>
-        <TouchableOpacity onPress={() => setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, selectedDate.getDate()))}>
+        <TouchableOpacity onPress={() => changeMonth(1)}>
           <Text style={styles.prevNextButton}>{'>'}</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.weekDaysContainer}>{getWeekDays()}</View>
-      <View style={styles.daysContainer}>{getMonthDays()}</View>
-      <TouchableOpacity style={styles.returnButton} onPress={handleReturnToPharmacyList}>
-        <Text style={styles.returnButtonText}>Volver a Farmacias</Text>
+      <View style={styles.monthCalendar}>{getMonthCalendar()}</View>
+      <TouchableOpacity style={styles.returnButton} onPress={() => navigation.navigate('Farmacia')}>
+        <Text style={styles.returnButtonText}>Volver a Farmacia</Text>
       </TouchableOpacity>
     </View>
   );
@@ -75,38 +86,32 @@ const Calendar = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
+    marginBottom: 20,
   },
   headerText: {
     fontSize: 20,
+    fontWeight: 'bold',
   },
   prevNextButton: {
     fontSize: 20,
   },
-  weekDaysContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    borderBottomWidth: 1,
-    borderColor: 'gray',
-    paddingBottom: 10,
-    marginBottom: 10,
+  monthCalendar: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
   },
-  dayHeader: {
-    width: 30,
-    alignItems: 'center',
-  },
-  daysContainer: {
+  week: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
   },
   day: {
-    width: 30,
-    height: 30,
+    width: 70, // Aumento de ancho
+    height: 100,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
@@ -114,12 +119,19 @@ const styles = StyleSheet.create({
     margin: 1,
   },
   emptyDay: {
-    width: 30,
-    height: 30,
+    width: 70, // Aumento de ancho
+    height: 100,
     margin: 1,
   },
   selectedDay: {
     backgroundColor: 'lightblue',
+  },
+  dayText: {
+    fontSize: 16,
+  },
+  dayOfWeekText: {
+    fontSize: 12,
+    color: 'gray',
   },
   returnButton: {
     backgroundColor: '#1976D2',
@@ -135,3 +147,5 @@ const styles = StyleSheet.create({
 });
 
 export default Calendar;
+
+
