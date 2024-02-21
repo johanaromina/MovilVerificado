@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, Alert, Linking } from 'react-native';
 import { Button } from 'react-native-elements';
 import { CheckBox } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
-
-
-
 
 const AddPharmacyScreen = () => {
   const [farmaciasGuardadas, setFarmaciasGuardadas] = useState([]);
@@ -15,24 +12,21 @@ const AddPharmacyScreen = () => {
   const [contactoSeleccionado, setContactoSeleccionado] = useState(null);
   const [modoEdicion, setModoEdicion] = useState(false);
   const navigation = useNavigation();
+
   const handleGoBack = () => {
     navigation.goBack();
   };
 
   const handleSaveContact = () => {
-    // Agrega la lógica para guardar o actualizar el contacto
     if (modoEdicion && contactoSeleccionado) {
-      // Actualiza el contacto existente
       const nuevosContactos = farmaciasGuardadas.map((contacto) =>
         contacto.id === contactoSeleccionado.id
           ? { ...contacto, nombreFarmacia, telefono, direccion }
           : contacto
       );
       setFarmaciasGuardadas(nuevosContactos);
-      // Sale del modo de edición
       setModoEdicion(false);
     } else {
-      // Guarda un nuevo contacto
       const nuevoContacto = {
         id: farmaciasGuardadas.length + 1,
         nombreFarmacia,
@@ -41,29 +35,24 @@ const AddPharmacyScreen = () => {
       };
       setFarmaciasGuardadas([...farmaciasGuardadas, nuevoContacto]);
     }
-
-    // Limpia los campos después de guardar o actualizar
     setNombreFarmacia('');
     setTelefono('');
     setDireccion('');
   };
 
   const handleViewContacts = () => {
-    // Agrega la lógica para ver los contactos guardados
+    // Lógica para ver los contactos guardados
   };
 
   const handleEditContact = (contacto) => {
-    // Pone los detalles del contacto en los campos de entrada para editar
     setNombreFarmacia(contacto.nombreFarmacia);
     setTelefono(contacto.telefono);
     setDireccion(contacto.direccion);
-    // Establece el modo de edición y guarda el contacto seleccionado
     setModoEdicion(true);
     setContactoSeleccionado(contacto);
   };
 
   const handleDeleteContact = (contacto) => {
-    // Muestra un mensaje de confirmación antes de eliminar el contacto
     Alert.alert(
       'Eliminar Contacto',
       'Si desea eliminar el contacto definitivamente presione Eliminar',
@@ -75,13 +64,7 @@ const AddPharmacyScreen = () => {
         {
           text: 'Eliminar',
           onPress: () => {
-            console.log('contacto.id:', contacto.id);
-            // Filtra los contactos para excluir el que se va a eliminar
-            const nuevosContactos = farmaciasGuardadas.filter((c) => {
-              console.log('c.id:', c.id);
-              return c.id !== contacto.id;
-            });
-            console.log('nuevosContactos:', nuevosContactos);
+            const nuevosContactos = farmaciasGuardadas.filter((c) => c.id !== contacto.id);
             setFarmaciasGuardadas(nuevosContactos);
           },
           style: 'destructive',
@@ -89,6 +72,14 @@ const AddPharmacyScreen = () => {
       ],
       { cancelable: true }
     );
+  };
+
+  const handleCallContact = (telefono) => {
+    if (telefono) {
+      Linking.openURL(`tel:${telefono}`);
+    } else {
+      Alert.alert('Error', 'No se ha proporcionado un número de teléfono.');
+    }
   };
 
   return (
@@ -112,30 +103,42 @@ const AddPharmacyScreen = () => {
         value={direccion}
         onChangeText={(text) => setDireccion(text)}
       />
-      {/* Agrega más campos de formulario según sea necesario */}
-
-      {/* Lista de farmacias guardadas */}
-      <Text style={styles.title}> Farmacias </Text>
       <FlatList
         data={farmaciasGuardadas}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.tableRow}>
+          <View style={styles.contactRow}>
             <CheckBox
               checked={contactoSeleccionado && contactoSeleccionado.id === item.id}
               onPress={() => setContactoSeleccionado(item)}
             />
-            <Text style={styles.column}>{item.nombreFarmacia}</Text>
-            <Text style={styles.column}>{item.telefono}</Text>
-            <Text style={styles.column}>{item.direccion}</Text>
-            <Button title="Editar" onPress={() => handleEditContact(item)} buttonStyle={styles.editButton} />
-            <Button title="Eliminar" onPress={() => handleDeleteContact(item)} buttonStyle={styles.deleteButton} />
-
+            <View style={styles.contactInfo}>
+              <Text style={styles.contactText}>{item.nombreFarmacia}</Text>
+              <Text style={styles.contactText}>{item.telefono}</Text>
+              <Text style={styles.contactText}>{item.direccion}</Text>
+            </View>
+            <View style={styles.contactActions}>
+              <Button
+                title="Editar"
+                onPress={() => handleEditContact(item)}
+                buttonStyle={styles.actionButton}
+              />
+              <Button
+                title="Eliminar"
+                onPress={() => handleDeleteContact(item)}
+                buttonStyle={styles.actionButton}
+              />
+              <Button
+                title="Llamar"
+                onPress={() => handleCallContact(item.telefono)}
+                buttonStyle={styles.callButton}
+              />
+            </View>
           </View>
         )}
         ListHeaderComponent={() => (
           <View style={styles.tableHeader}>
-            <Text style={styles.columnHeader}>Seleccionar</Text>
+            <Text style={styles.columnHeader}>Click</Text>
             <Text style={styles.columnHeader}>Farmacia</Text>
             <Text style={styles.columnHeader}>Teléfono</Text>
             <Text style={styles.columnHeader}>Dirección</Text>
@@ -143,8 +146,6 @@ const AddPharmacyScreen = () => {
           </View>
         )}
       />
-
-      {/* Botones */}
       <View style={styles.buttonContainer}>
         <Button title="Volver" onPress={handleGoBack} buttonStyle={styles.button} />
         <Button title="Guardar" onPress={handleSaveContact} buttonStyle={styles.button} />
@@ -169,10 +170,26 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
   },
-  buttonContainer: {
+  contactRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  contactInfo: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  contactText: {
+    marginBottom: 3,
+  },
+  contactActions: {
+    flexDirection: 'row',
+  },
+  actionButton: {
+    marginHorizontal: 5,
+  },
+  callButton: {
+    backgroundColor: '#32CD32',
   },
   tableHeader: {
     flexDirection: 'row',
@@ -184,27 +201,16 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
-  tableRow: {
+  buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 5,
-  },
-  column: {
-    flex: 1,
-    textAlign: 'center',
+    marginTop: 20,
   },
   button: {
     backgroundColor: '#228B22',
   },
-  editButton: {
-    backgroundColor: '#1E90FF',
-  },
-  deleteButton: {
-    backgroundColor: '#FF6347',
-  },
 });
 
 export default AddPharmacyScreen;
-
 
 
