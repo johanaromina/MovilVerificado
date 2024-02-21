@@ -4,7 +4,7 @@ import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 
 const FarmacyListScreen = () => {
-    const username = '*';
+    const username = '';
     
     const navigation = useNavigation();
 
@@ -41,10 +41,10 @@ const FarmacyListScreen = () => {
     return (
         <View style={styles.container}>
             <Image
-                source={require('../../../assets/pngwing.com (2).png')}
+                source={require('../../../assets/foto4.png')}
                 style={styles.image}
             />
-            <Text style={styles.welcomeText}>¡Bienvenido, {username}!</Text>
+            <Text style={styles.welcomeText}>¡Bienvenido {username}!</Text>
 
             <CustomButton
                 onPress={handleCallPolice}
@@ -107,8 +107,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#F9FBFC',
     },
     image: {
-        width: '12%', // Ajusta el ancho de la imagen según tus necesidades.
-        height: '35%', // Ajusta la altura de la imagen según tus necesidades.
+        width: '13%', // Ajusta el ancho de la imagen según tus necesidades.
+        height: '25%', // Ajusta la altura de la imagen según tus necesidades.
         marginBottom: 2,
     },
     welcomeText: {
