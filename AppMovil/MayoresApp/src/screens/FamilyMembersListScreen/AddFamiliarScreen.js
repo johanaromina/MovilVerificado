@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, Linking } from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 
@@ -13,14 +13,13 @@ const AddFamiliarScreen = () => {
 
   const handleAddFamiliar = () => {
     const newFamiliar = {
-      id: Date.now(), // Generar un ID único para el familiar
+      id: Date.now(),
       nombre,
       telefono,
       email,
     };
 
     setFamiliares([...familiares, newFamiliar]);
-    // Limpiar los campos del formulario después de agregar un familiar
     setNombre('');
     setTelefono('');
     setEmail('');
@@ -33,11 +32,28 @@ const AddFamiliarScreen = () => {
   const handleDeleteFamiliar = (id) => {
     const updatedFamiliares = familiares.filter((familiar) => familiar.id !== id);
     setFamiliares(updatedFamiliares);
-    // Si el familiar seleccionado se elimina, deseleccionarlo
     if (familiarSeleccionado && familiarSeleccionado.id === id) {
       setFamiliarSeleccionado(null);
     }
   };
+
+  const handleCallFamiliar = (telefono) => {
+    const url = `tel:${telefono}`;
+    Linking.openURL(url)
+      .then(() => {
+        console.log(`Llamando a ${telefono}`);
+      })
+      .catch((error) => {
+        console.error('Error al intentar realizar la llamada:', error);
+      });
+  };
+  
+  const handleEditFamiliar = (familiar) => {
+    // Implementa la lógica para editar el familiar seleccionado
+    console.log('Editando familiar:', familiar);
+    // Por ahora, esta función simplemente imprimirá en la consola el familiar seleccionado.
+  };
+  
 
   const renderFamiliarItem = ({ item }) => (
     <View style={styles.familiarItem}>
@@ -46,9 +62,17 @@ const AddFamiliarScreen = () => {
           {item.nombre}
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => handleDeleteFamiliar(item.id)}>
-        <Text style={styles.deleteButton}>Eliminar</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={() => handleCallFamiliar(item.telefono)}>
+          <Text style={[styles.actionButton, styles.callButton]}>Llamar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleEditFamiliar(item)}>
+          <Text style={[styles.actionButton, styles.editButton]}>Editar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleDeleteFamiliar(item.id)}>
+          <Text style={[styles.actionButton, styles.deleteButton]}>Eliminar</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
@@ -147,9 +171,23 @@ const styles = StyleSheet.create({
   selectedItem: {
     fontWeight: 'bold',
   },
+  buttonContainer: {
+    flexDirection: 'row',
+  },
+  actionButton: {
+    padding: 5,
+    borderRadius: 5,
+    marginLeft: 5,
+  },
+  callButton: {
+    backgroundColor: '#00bcd4',
+  },
+  editButton: {
+    backgroundColor: '#ffc107',
+  },
   deleteButton: {
-    color: 'red',
-    fontWeight: 'bold',
+    backgroundColor: '#f44336',
+    color: '#fff',
   },
   addButtonContainer: {
     alignSelf: 'flex-end',

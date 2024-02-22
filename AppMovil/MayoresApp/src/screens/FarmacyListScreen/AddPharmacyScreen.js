@@ -81,6 +81,7 @@ const AddPharmacyScreen = () => {
       Alert.alert('Error', 'No se ha proporcionado un número de teléfono.');
     }
   };
+  
 
   return (
     <View style={styles.container}>

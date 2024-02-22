@@ -25,7 +25,11 @@ const HomeScreen = () => {
       await Voice.start('es-ES');
     } catch (error) {
       console.error('Error al iniciar el reconocimiento de voz:', error);
+      Alert.alert('Error', 'Hubo un problema al iniciar el reconocimiento de voz. Por favor, inténtalo de nuevo.');
+      setIsListening(false); // Asegurarse de desactivar el estado de "escuchando" en caso de error
     }
+  
+  
   };
 
   const handleVoiceResults = (results) => {
@@ -43,7 +47,7 @@ const HomeScreen = () => {
         navigateToScreen('Family Members List');
         break;
       case 'llamar al 911':
-        handleCall911AndAlertFamily();
+        handleCall911AndAlertFamily('911');
         break;
       default:
         Alert.alert('Comando no reconocido', 'Por favor, intenta nuevamente.');
@@ -184,7 +188,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     padding: 10,
     marginTop: 20,
-    fontFamily: 'Arial',
     textShadowColor: 'rgba(0, 0, 0, 0.5)', // Sombreado del texto
     textShadowOffset: { width: 2, height: 2 }, // Desplazamiento del sombreado
     textShadowRadius: 10, // Radio del sombreado
@@ -222,5 +225,3 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
-
-

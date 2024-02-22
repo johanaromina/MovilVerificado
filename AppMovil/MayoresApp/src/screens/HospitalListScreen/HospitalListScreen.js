@@ -14,7 +14,17 @@ const HospitalListScreen = () => {
 
     // Función para buscar consultorios en Google Maps
     const handleSearchConsultorios = () => {
-        // Implementa la lógica para buscar consultorios en Google Maps aquí
+        if (consultorio) {
+            // Concatena el nombre del consultorio con la ubicación en Google Maps
+            const searchTerm = `${consultorio} consultorio`;
+            // Abre la aplicación de Google Maps con la búsqueda
+            const handleOpenMaps = () => {
+                // Abre Google Maps para localizar farmacias cercanas.
+                Linking.openURL('https://www.google.com/maps/search/consultorios');
+            }
+        } else {
+            alert('Por favor, ingresa el nombre del consultorio.');
+        }
     };
 
     // Función para llamar a un médico
