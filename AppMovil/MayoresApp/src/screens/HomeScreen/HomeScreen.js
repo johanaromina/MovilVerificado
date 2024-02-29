@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, Alert, Linking } from 'react-native';
 import Voice from '@react-native-voice/voice';
 import Communications from 'react-native-communications';
 
@@ -9,7 +9,7 @@ const HomeScreen = () => {
   const username = 'Johana';
   const navigation = useNavigation();
   const [isListening, setIsListening] = useState(false);
-  const emergencyContactNumber = ' 2604618642'; // Número de contacto de emergencia
+  const emergencyContactNumber = '911'; // Número de contacto de emergencia
 
   useEffect(() => {
     Voice.onSpeechResults = handleVoiceResults;
@@ -28,8 +28,6 @@ const HomeScreen = () => {
       Alert.alert('Error', 'Hubo un problema al iniciar el reconocimiento de voz. Por favor, inténtalo de nuevo.');
       setIsListening(false); // Asegurarse de desactivar el estado de "escuchando" en caso de error
     }
-  
-  
   };
 
   const handleVoiceResults = (results) => {
@@ -47,7 +45,7 @@ const HomeScreen = () => {
         navigateToScreen('Family Members List');
         break;
       case 'llamar al 911':
-        handleCall911AndAlertFamily('911');
+        handleCall911AndAlertFamily();
         break;
       default:
         Alert.alert('Comando no reconocido', 'Por favor, intenta nuevamente.');
@@ -61,35 +59,12 @@ const HomeScreen = () => {
   };
 
   const handleCall911AndAlertFamily = () => {
-    console.log('Llamando al 911 y alertando a la familia');
-    Promise.all([callEmergencyNumber('911'), sendWhatsAppAlert(emergencyContactNumber)])
-      .then(() => {
-        console.log('Acciones completadas correctamente.');
-      })
-      .catch((error) => {
-        console.error('Error al realizar las acciones:', error);
-      });
+    console.log('Llamando al 911');
+    callEmergencyNumber(emergencyContactNumber);
   };
-
+  
   const callEmergencyNumber = (number) => {
-    return new Promise((resolve, reject) => {
-      Communications.phonecall(number, true);
-      // Esto llama al número de emergencia sin necesidad de confirmación del usuario
-      // Nota: Es posible que necesites permisos especiales para realizar llamadas de emergencia
-      // Esto es solo un ejemplo, asegúrate de manejar los casos de éxito y error adecuadamente
-      resolve();
-    });
-  };
-
-  const sendWhatsAppAlert = (phoneNumber) => {
-    return new Promise((resolve, reject) => {
-      const message = '¡Abuelo en peligro! Por favor, ayuda.';
-      Communications.textWithoutEncoding(phoneNumber, message);
-      // Esto envía un mensaje de texto a través de WhatsApp al número especificado
-      // Nota: Asegúrate de tener permisos adecuados y que el número sea válido
-      // Esto es solo un ejemplo, asegúrate de manejar los casos de éxito y error adecuadamente
-      resolve();
-    });
+    Linking.openURL(`tel:${number}`);
   };
 
   const handleReturnPressed = () => {
